@@ -1,0 +1,204 @@
+﻿/* styles.css */
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
+    margin: 0;
+    padding: 0;
+}
+
+.dashboard-container {
+    display: flex;
+    height: 100vh;
+}
+
+.main-dashboard {
+    flex: 3;
+    padding: 20px;
+    border-right: 1px solid #ddd;
+    background-color: #ffffff;
+    overflow-y: auto;
+}
+
+.recent-activities {
+    flex: 1;
+    padding: 20px;
+    background-color: #f9f9f9;
+    overflow-y: auto;
+    height: 100vh;
+}
+
+h1 {
+    font-size: 1.5rem; /* smaller font size */
+    margin-bottom: 20px;
+}
+
+.kpi-links {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.kpi-link {
+    padding: 8px 15px; /* smaller padding */
+    margin: 5px;
+    font-size: 0.9rem; /* smaller font size */
+    font-weight: bold;
+    color: #007bff;
+    text-decoration: none;
+    background-color: #e8f0fe;
+    border-radius: 5px;
+    transition: background-color 0.3s, transform 0.3s;
+    cursor: pointer;
+}
+
+    .kpi-link:hover {
+        background-color: #c5dff8;
+        transform: scale(1.05);
+    }
+
+.details {
+    display: none;
+    margin-top: 10px;
+    border: 1px solid #ddd;
+    background-color: #ffffff;
+    border-radius: 5px;
+    padding: 10px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.search-bar, .filter-bar {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+    .search-bar input, .filter-bar input {
+        width: 100%;
+        padding: 8px; /* smaller padding */
+        font-size: 0.9rem; /* smaller font size */
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        margin-right: 10px;
+    }
+
+    .search-bar i, .filter-bar i {
+        font-size: 1rem; /* smaller font size */
+        color: #007bff;
+    }
+
+.lead-info h2 {
+    font-size: 1.25rem; /* smaller font size */
+    margin-bottom: 10px;
+}
+
+.lead {
+    border-bottom: 1px solid #ddd;
+    padding: 10px 0;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+    .lead:hover {
+        background-color: #f1f1f1;
+    }
+
+.chat-history {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 70vh;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+.chat-message {
+    background-color: #ffffff;
+    border-radius: 10px;
+    padding: 10px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s;
+    position: relative;
+    margin-bottom: 10px;
+}
+
+    .chat-message .activity-date {
+        position: absolute;
+        top: -10px;
+        left: 10px;
+        background-color: #f9f9f9;
+        padding: 2px 5px;
+        border-radius: 3px;
+        font-size: 0.8rem;
+        color: #666;
+    }
+
+    .chat-message:hover {
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    }
+
+.message-content {
+    margin-top: 20px;
+}
+
+    .message-content p {
+        margin: 0;
+        font-size: 0.9rem;
+    }
+
+.add-activity {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background-color: #ffffff;
+    border-top: 1px solid #ddd;
+}
+
+    .add-activity input[type="text"] {
+        flex: 1;
+        padding: 10px;
+        font-size: 0.9rem; /* smaller font size */
+        border: 1px solid #ddd;
+        border-radius: 25px;
+        margin-right: 10px;
+    }
+
+    .add-activity button {
+        padding: 8px; /* smaller padding */
+        font-size: 1rem; /* smaller font size */
+        color: #ffffff;
+        background-color: #25d366;
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+        .add-activity button:hover {
+            background-color: #1ebe57;
+        }
+
+        .add-activity button i {
+            font-size: 1rem; /* smaller font size */
+        }
+
+.file-upload-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    background-color: #e8f0fe;
+    border-radius: 50%;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+    .file-upload-icon:hover {
+        background-color: #c5dff8;
+    }
+
+    .file-upload-icon i {
+        font-size: 1rem; /* smaller font size */
+        color: #007bff;
+    }

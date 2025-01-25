@@ -1,0 +1,305 @@
+﻿@model LeadCounts
+@{
+    ViewData["Title"] = "Lead Tracker Dashboard";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
+    @* <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script> *@
+   
+    @* <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script> *@
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="~/css/salestrackercss1.css" rel="stylesheet" />
+    <link href="~/css/recentactivities.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="main-dashboard">
+            <h1>Lead Tracker Dashboard <i class="fas fa-tachometer-alt"></i></h1>
+            <!-- Search Bar -->
+            <div class="search-bar">
+                <input type="text" id="search-input" onkeyup="searchLeads()" placeholder="Search for leads...">
+                <i class="fas fa-search"></i>
+            </div>
+            <!-- Key Metrics -->
+            <div class="kpi-links">
+                <a href="#" class="kpi-link" id="btnTotalLeads" onclick="getTotalLead('total-leads-details')">
+                    Total Leads <i class="fas fa-users"></i>: @Model.TotalLeads
+                </a>
+                <a href="#" class="kpi-link" onclick="getActiveLeads('total-leads-details')">
+                    Active Leads <i class="fas fa-user-check"></i>: @Model.ActiveLeads
+                </a>
+                <a href="#" class="kpi-link" onclick="toggleDetails('converted-leads-details')">
+                    Converted Leads <i class="fas fa-user-tie"></i>: @Model.ConvertedLeads
+                </a>
+                <a href="#" class="kpi-link" onclick="getActionableLeads('total-leads-details')">
+                    Today's Actionable Leads <i class="fas fa-tasks"></i>: <span id="actionable-leads-count">@Model.TodaysActionableLeads</span>
+                </a>
+            </div>
+            <div>
+                <form>
+                    <input type="hidden" id="TrId" name="TrId">
+                    <input type="hidden" id="TrDetId" name="TrDetId">
+                    <div class="form-group">
+                        <label for="ContactNo">Contact:</label>
+                        <input type="text" id="ContactNo" name="objLead.ContactNo">
+                    </div>
+                    <div class="form-group">
+                        <label for="KeyPerson">Key Person:</label>
+                        <input type="text" id="KeyPerson" name="KeyPerson">
+                    </div>
+                    <div class="form-group">
+                        <label for="city">City:</label>
+                        <input type="text" id="City" name="city">
+                    </div>
+                    <div class="form-group">
+                        <label for="designation">Designation:</label>
+                        <input type="text" id="Designation" name="designation">
+                    </div>
+                    <div class="form-group">
+                        <label for="CompName">Company Name:</label>
+                        <input type="text" id="CompName" name="CompName">
+                    </div>
+                    <div class="form-group">
+                        <label for="OEmail">Official Email:</label>
+                        <input type="email" id="OEmail" name="OEmail">
+                    </div>
+                    <div class="form-group">
+                        <label for="category">Category:</label>
+                        <select id="Catg" name="Catg">
+                            <option value="">-- Select --</option>
+                            <option value="R">R</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="LeadStatus">Lead Status:</label>
+                        <select id="LeadStatus" name="LeadStatus">
+                            <option value="">-- Select --</option>
+                            <option value="New">New</option>
+                            <option value="Open">Open</option>
+                            <option value="Close">Close</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="AddDate">Lead Date:</label>
+                        <input type="text" id="AddDate" name="AddDate" value="">
+                    </div>
+                    <div class="form-group">
+                        <label for="reminderdate">Reminder Date:</label>
+                        <input type="text" id="reminderdate" name="reminderdate" value="">
+                    </div>
+                    <div class="form-group">
+                        <label for="customerremark">Customer Remark:</label>
+                        <textarea id="customerremark" name="customerremark"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="selfremark1">Self Remark1:</label>
+                        <textarea id="selfremark1"  name="selfremark1"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="specialremark">Special Remark:</label>
+                        <textarea id="specialremark" name="specialremark"></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" id="btnSave" class="btn-save">Save</button>
+                        <button type="button" class="btn-find">Find</button>
+                        <button type="button" class="btn-cancel">Cancel</button>
+                        <button type="button" class="btn-prvdoc">PrvDoc</button>
+                    </div>
+                </form>
+            </div>
+            <!-- Details Sections -->
+            <div id="details-container">
+                <div class="details" id="total-leads-details">
+                    <h2 id="LeadSection">Total Leads</h2>
+                    <table id="salesTable">
+                        <thead>
+                            <tr>
+                                <th><i class="fas fa-phone-alt"></i> ContactNo</th>
+                                <th><i class="fas fa-user"></i> Key Person</th>
+                                <th><i class="fas fa-list"></i> Category</th>
+                                <th><i class="fas fa-info-circle"></i> Lead Status</th>
+                                <th><i class="fas fa-calendar-alt"></i> Lead Date</th>
+                                <th><i class="fas fa-calendar-check"></i> Reminder Date</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+               @*  <div class="details" id="active-leads-details">
+                    <h2>Active Leads</h2>
+                    <p>In Progress: 30</p>
+                    <p>Needs Attention: 20</p>
+                </div>
+                <div class="details" id="converted-leads-details">
+                    <h2>Converted Leads</h2>
+                    <p>Converted Today: 5</p>
+                    <p>Total Conversions: 100</p>
+                </div>
+                <div class="details" id="actionable-leads-details">
+                    <h2>Today's Actionable Leads</h2>
+                    <p>New: 3</p>
+                    <p>Follow-up Needed: 2</p>
+                </div> *@
+            </div>
+            <!-- Lead Information -->
+           @*  <div class="lead-info" id="lead-info">
+                <h2>Leads <i class="fas fa-address-book"></i></h2>
+                <div class="lead">
+                    <h4>John Doe <i class="fas fa-envelope"></i></h4>
+                    <p>Email: john.doe@example.com</p>
+                    <p>Created At: 2024-11-20</p>
+                </div>
+                <div class="lead">
+                    <h4>Jane Smith <i class="fas fa-envelope"></i></h4>
+                    <p>Email: jane.smith@example.com</p>
+                    <p>Created At: 2024-11-21</p>
+                </div>
+                <!-- Add more leads here -->
+            </div> *@
+        </div>
+        <div class="recent-activities">
+            <h2>Recent Activities <i class="fas fa-history"></i></h2>
+            <!-- Filter Bar -->
+           @*  <div class="filter-bar">
+                <input type="text" id="filter-input" onkeyup="filterActivities()" placeholder="Filter activities...">
+                <i class="fas fa-filter"></i>
+            </div> *@
+            <div id="recent-activities-list" class="chat-history">
+                <div class="chat-message">
+                    @* <p class="activity-date"><strong>2024-11-21</strong></p> *@
+                    <div class="message-content">
+                        <p><strong>No Recent Activity</strong>.</p>
+                    </div>
+                </div>
+              @*   <div class="chat-message">
+                    <p class="activity-date"><strong>2024-11-21</strong></p>
+                    <div class="message-content">
+                        <p><strong>Jane Smith:</strong> completed signup <i class="fas fa-user-plus"></i>.</p>
+                    </div>
+                </div> *@
+                <!-- Add more activities here -->
+            </div>
+            <!-- Add Activity Form -->
+            @* <div class="add-activity">
+                <input type="file" id="file-upload" style="display: none;" />
+                <label for="file-upload" class="file-upload-icon">
+                    <i class="fas fa-paperclip"></i>
+                </label>
+                <input type="text" id="new-activity-description" placeholder="Type a new activity...">
+                <button onclick="addActivity()">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div> *@
+        </div>
+    </div>
+   @*  <script src="~/js/crudsaletracker.js"></script> *@
+    <script>
+        // Add the provided JavaScript code here
+        document.getElementById('uploadForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+            addActivity();
+            this.submit();
+        });
+
+        function updateActionableLeadsCount() {
+            var leads, lead, actionableCount = 0, today;
+            leads = document.getElementById("lead-info").getElementsByClassName('lead');
+            today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
+
+            for (var i = 0; i < leads.length; i++) {
+                lead = leads[i];
+                var createdAt = lead.querySelector('p:nth-child(3)').textContent.replace('Created At: ', '');
+                if (createdAt === today) {
+                    actionableCount++;
+                }
+            }
+
+            document.getElementById('actionable-leads-count').textContent = actionableCount;
+        }
+
+        function toggleDetails(id) {
+            var details = document.getElementById(id);
+            if (details.style.display === "block") {
+
+                details.style.display = "none";
+            } else {
+                getTotalLead();
+                details.style.display = "block";
+            }
+
+        }
+
+        function searchLeads() {
+            var input, filter, leads, lead, i, txtValue;
+            input = document.getElementById('search-input');
+            filter = input.value.toUpperCase();
+            leads = document.getElementById("lead-info").getElementsByClassName('lead');
+
+            for (i = 0; i < leads.length; i++) {
+                lead = leads[i];
+                txtValue = lead.textContent || lead.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    lead.style.display = "";
+                } else {
+                    lead.style.display = "none";
+                }
+            }
+        }
+
+        function filterActivities() {
+            var input, filter, activities, activity, i, txtValue;
+            input = document.getElementById('filter-input');
+            filter = input.value.toUpperCase();
+            activities = document.getElementById("recent-activities-list").getElementsByClassName('chat-message');
+
+            for (i = 0; i < activities.length; i++) {
+                activity = activities[i];
+                txtValue = activity.textContent || activity.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    activity.style.display = "";
+                } else {
+                    activity.style.display = "none";
+                }
+            }
+        }
+
+        function addActivity() {
+            var description = document.getElementById('new-activity-description').value;
+            var today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
+            var user = "Current User"; // Static user for now
+
+            if (description) {
+                var activityList = document.getElementById('recent-activities-list');
+
+                var chatMessage = document.createElement('div');
+                chatMessage.classList.add('chat-message');
+
+                var activityDate = document.createElement('p');
+                activityDate.classList.add('activity-date');
+                activityDate.innerHTML = `<strong>${today}</strong>`;
+                chatMessage.appendChild(activityDate);
+
+                var messageContent = document.createElement('div');
+                messageContent.classList.add('message-content');
+                messageContent.innerHTML = `<p><strong>${user}:</strong> ${description}</p>`;
+                chatMessage.appendChild(messageContent);
+
+                activityList.appendChild(chatMessage);
+
+                // Clear input field
+                document.getElementById('new-activity-description').value = '';
+            } else {
+                alert("Please enter an activity description.");
+            }
+        }
+    </script>
+</body>
+</html>
