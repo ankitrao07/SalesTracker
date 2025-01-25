@@ -27,7 +27,7 @@
                 $("#responseMessage").text("LeadNumber: "+response[1]+" has created successfully");
                 // Show the modal 
                 $("#responseModal").modal('show');
-                getLeadDetailByIDAfterPost(response);
+                getLeadDetailByIDAfterPost(response[0]);
                 resetForm();
             },
             error: function (error) {
@@ -164,15 +164,17 @@ function getLeadDetailByIDAfterPost(id) {
             var row = document.getElementById(rowId);
             if (row) {
                 // Update the columns with new values 
-                row.children[0].textContent = lead.contactNo;
-                row.children[1].textContent = lead.contactPerson;
-                row.children[2].textContent = lead.leadCategory;
-                row.children[3].textContent = leadActivity.leadStatus;
-                row.children[4].textContent = leadActivity.leadDate;
-                row.children[5].textContent = leadActivity.reminderDate;
+                row.children[0].textContent = lead.leadNumber;
+                row.children[1].textContent=  lead.contactNo;
+                row.children[2].textContent = lead.contactPerson;
+                row.children[3].textContent = lead.leadCategory;
+                row.children[4].textContent = leadActivity.leadStatus;
+                row.children[5].textContent = leadActivity.leadDate;
+                row.children[6].textContent = leadActivity.reminderDate;
             }
             else {
                 row += '<tr id=row-' + lead.leadId + '>';
+                row += '<td>' + lead.leadNumber + '</td>';
                 row += '<td>' + lead.contactNo + '</td>';
                 row += '<td>' + lead.contactPerson + '</td>';
                 row += '<td>' + lead.leadCategory + '</td>';

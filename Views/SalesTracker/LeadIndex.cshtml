@@ -96,7 +96,7 @@
                     font-size: 14px; /* Smaller icon size for action button */
                 }
                 .overdue{
-                    background-color:#ffcccc !important;  /* light red*/
+                    background-color:orangered !important;  /* light red*/
                     position: relative;
                 }
                 .overdue1::after{
@@ -137,11 +137,9 @@
                 <!-- Details Sections -->
                 <div id="details-container">
                     <div class="details" id="total-leads-details">
-                        @* <h2 id="LeadSection">Total Leads</h2> *@
                         <div class="d-flex justify-content-between mb-3">
                             <div> <h2 id="LeadSection">Total Leads</h2></div>
                             <div>
-                                @* <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addLeadModal"> <i class="fas fa-plus"></i> New Lead </button> *@
                                 <button type="button" id="btnNewLead" class="btn btn-success btn-sm" data-bs-target="#addLeadModal"> <i class="fas fa-plus"></i> Add New Lead </button>
                             </div>
                         </div>
@@ -167,62 +165,6 @@
                     <form id="myForm">
                         <div class="accordion" id="leadFormAccordion">
                             <!-- Add New Lead Section -->
-                           @*  <div class="accordion-item">
-                                <h2 class="accordion-header" id="headingAddNewLead">
-                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAddNewLead" aria-expanded="true" aria-controls="collapseAddNewLead">
-                                        <i class="fas fa-plus-circle me-2"></i>Add New Lead
-                                    </button>
-                                </h2>
-                                <div id="collapseAddNewLead" class="accordion-collapse collapse show" aria-labelledby="headingAddNewLead" data-bs-parent="#leadFormAccordion">
-                                    <div class="accordion-body">
-                                        <div class="card mb-3">
-                                            <div class="card-body">
-                                                <div class="row mb-3">
-                                                    <div class="col-md-6">
-                                                        <div class="form-floating">
-                                                            <input type="hidden" id="leadId" value="0" />
-                                                            <input type="hidden" id="leadActivityId" value="0" />
-                                                            <input type="text" class="form-control" id="docNo" name="DocNo" placeholder="Doc No">
-                                                            <label for="docNo">Doc No</label>
-                                                            <div class="invalid-feedback">Please provide a valid document number (minimum 5 characters).</div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <div class="form-floating">
-                                                            <input type="text" class="form-control" id="docDate" name="DocDate" placeholder="Doc Date">
-                                                            <label for="docDate">Doc Date</label>
-
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="row mb-3">
-                                                    <div class="col-md-6">
-                                                        <div class="form-floating">
-                                                            <input type="text" class="form-control" id="enteredBy" name="EnteredBy" placeholder="Entered by">
-                                                            <label for="enteredBy">Entered by</label>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <div class="form-floating">
-                                                            <select class="form-select" id="leadStatus" name="LeadStatus">
-                                                                <option>New Lead</option>
-                                                                <option>Qualified</option>
-                                                                <option>Contacted - No reply</option>
-                                                                <option>Proposal</option>
-                                                                <option>Followup</option>
-                                                                <option>No Action required</option>
-                                                                <option>Closed</option>
-                                                            </select>
-                                                            <label for="leadStatus">Lead Status</label>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div> *@
-
                             <!-- Lead Information Section -->
                             <div class="accordion-item">
                                 <h2 class="accordion-header" id="headingLeadInformation">
@@ -330,8 +272,6 @@
                                     </div>
                                 </div>
                             </div>
-
-                            <!-- Repeat sections for Business Information, Contact Information, Activity Scheduling, etc. -->
                             <!-- Contact Information Section -->
                             <div class="accordion-item">
                                 <h2 class="accordion-header" id="headingContactInformation">
@@ -543,36 +483,15 @@
             <div class="recent-activities">
                 <h2>Recent Activities <i class="fas fa-history"></i></h2>
                 <!-- Filter Bar -->
-                @*  <div class="filter-bar">
-                <input type="text" id="filter-input" onkeyup="filterActivities()" placeholder="Filter activities...">
-                <i class="fas fa-filter"></i>
-                </div> *@
                 <div id="recent-activities-list" class="chat-history">
                     <div class="chat-message">
-                        @* <p class="activity-date"><strong>2024-11-21</strong></p> *@
                         <div class="message-content">
                             <p><strong>No Recent Activity</strong>.</p>
                         </div>
                     </div>
-                    @*   <div class="chat-message">
-                    <p class="activity-date"><strong>2024-11-21</strong></p>
-                    <div class="message-content">
-                    <p><strong>Jane Smith:</strong> completed signup <i class="fas fa-user-plus"></i>.</p>
-                    </div>
-                    </div> *@
                     <!-- Add more activities here -->
                 </div>
                 <!-- Add Activity Form -->
-                @* <div class="add-activity">
-                <input type="file" id="file-upload" style="display: none;" />
-                <label for="file-upload" class="file-upload-icon">
-                <i class="fas fa-paperclip"></i>
-                </label>
-                <input type="text" id="new-activity-description" placeholder="Type a new activity...">
-                <button onclick="addActivity()">
-                <i class="fas fa-paper-plane"></i>
-                </button>
-                </div> *@
             </div>
                 <!-- Modal -->
                 <div class="modal fade" id="responseModal" tabindex="-1" aria-labelledby="responseModalLabel" aria-hidden="true">

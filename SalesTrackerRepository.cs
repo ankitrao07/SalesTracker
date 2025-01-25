@@ -381,6 +381,7 @@ namespace SalesTracker
                             var leadDTO = new LeadDTO
                             {
                                 LeadId = (int)reader["LeadId"],
+                                LeadNumber = reader["LeadNumber"].ToString(),
                                 DocNo = reader["DocNo"].ToString(),
                                 DocDate = Convert.ToDateTime(reader["DocDate"]).ToString("d"),
                                 EnteredBy = reader["AddedBy"].ToString(),
