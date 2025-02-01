@@ -56,12 +56,16 @@
     getLeadBySelectedKPI('total-leads-details','ActionableLeads');
 
     $("#btnNewLead").click(function () {
-        $("#addLeadModal").toggle();
-        $("#details-container").toggle();
+        $("#addLeadModal").addClass('show');
+        $("#addLeadModal").removeClass('hidden');
+        $("#details-container").removeClass("show");
+        $("#details-container").addClass('hidden');
     });
     $("#btnCancel").click(function () {
-        $("#addLeadModal").toggle();
-        $("#details-container").toggle();
+        $("#addLeadModal").addClass('hidden');
+        $("#addLeadModal").removeClass('show');
+        $("#details-container").removeClass("hidden");
+        $("#details-container").addClass('show');
     })
     $("#btnModalClose").click(function () {
         $("#addLeadModal").toggle();
@@ -75,6 +79,10 @@ function resetForm() {
 function getLeadBySelectedKPI(id, selectedKPI) {
     var details = document.getElementById(id);
     details.style.display = "block";
+    $("#addLeadModal").addClass('hidden');
+    $("#addLeadModal").removeClass('show');
+    $("#details-container").removeClass("hidden");
+    $("#details-container").addClass('show');
     if(selectedKPI=='TotalLeads')
     $("#LeadSection").text("Total Leads");
     else if (selectedKPI == 'ActiveLeads')

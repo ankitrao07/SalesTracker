@@ -14,46 +14,7 @@ namespace SalesTracker
         {
             _connectionString = connectionString;
         }
-        public async Task<List<vwLeadDetail>> GetTotalLeads()
-        {
-            var vwLeadDetail = new List<vwLeadDetail>();
-
-            using (var connection = new SqlConnection(_connectionString))
-            {
-                var command = new SqlCommand("sp_GetTotalLeads", connection);
-                await connection.OpenAsync();
-                using (SqlDataReader reader = await command.ExecuteReaderAsync())
-                {
-                    while (await reader.ReadAsync())
-                    {
-                        var lead = new Lead
-                        {
-                            TrId = (int)reader["TrId"],
-                            Catg = reader["Catg"].ToString(),
-                            //CompName = reader["CompName"].ToString(),
-                            KeyPerson = reader["KeyPerson"].ToString(),
-                            ContactNo = reader["ContactNo"].ToString(),
-
-                        };
-                        var leadDetail = new LeadDetail
-                        {
-                            TrDetId = Convert.ToInt32(reader["TrDetId"]),
-                            LeadStatus = Convert.ToString(reader["LeadStatus"]),
-                            LeadDate = Convert.ToDateTime(reader["LeadDate"]).ToShortDateString(),
-                            RemDate = Convert.ToDateTime(reader["RemDate"]).ToShortDateString()
-                        };
-
-                        vwLeadDetail.Add(new vwLeadDetail
-                        {
-                            objLead = lead,
-                            objLeadDetail = leadDetail
-                        });
-
-                    }
-                }
-            }
-            return vwLeadDetail;
-        }
+       
 
         public async Task<List<LeadCompositeDTO>> GetTotalLeadsNew()
         {
@@ -142,26 +103,7 @@ namespace SalesTracker
         }
 
 
-        public int AddLead(Lead lead, LeadDetail leadDetail)
-        {
-            using (var connection = new SqlConnection(_connectionString))
-            {
-                var command = new SqlCommand("sp_AddLeads", connection)
-                {
-                    CommandType = CommandType.StoredProcedure
-                };
-                var parameterTracker = new Dictionary<string, object>();
-                AddParametersFromObject(command, lead,parameterTracker);
-                AddParametersFromObject(command, leadDetail, parameterTracker);
-
-                command.Parameters.AddWithValue("@AddBy", "Ankit");
-                command.Parameters.AddWithValue("@UpdBy", "Ankit");
-
-                connection.Open();
-                int trId = (int)command.ExecuteScalar();
-                return trId;
-            }
-        }
+       
 
         public object AddLeadNew(LeadNew lead, LeadActivity leadActivity)
         {
@@ -289,75 +231,7 @@ namespace SalesTracker
         //    }
         //}
 
-        public async Task<vwLeadActivities> GetLeadDetailByIdAsync(int leadId)
-        {
-            vwLeadActivities vwLeadActivities = new vwLeadActivities();
-            vwLeadActivities.vwLeadDetail = new vwLeadDetail();
-            vwLeadActivities.RecentActivities = new List<LeadDetail>();
-
-            using (var connection = new SqlConnection(_connectionString))
-            {
-                var command = new SqlCommand("sp_GetLeadByID", connection);
-                command.CommandType = CommandType.StoredProcedure;
-                command.Parameters.AddWithValue("@TrId", leadId);
-                await connection.OpenAsync();
-                using (SqlDataReader reader = await command.ExecuteReaderAsync())
-                {
-                    if (reader.Read())
-                    {
-
-
-                        var objLead = new Lead
-                        {
-                            TrId = (int)reader["TrId"],
-                            Catg = reader["Catg"].ToString(),
-                            KeyPerson = reader["KeyPerson"].ToString(),
-                            ContactNo = reader["ContactNo"].ToString(),
-                            CompName = reader["CompName"].ToString(),
-                            City = reader["City"].ToString(),
-                            OEmail = reader["OEmail"].ToString(),
-                            Remark = reader["Remark"].ToString(),
-
-                        };
-                        var objLeadDetail = new LeadDetail
-                        {
-                            LeadStatus = reader["LeadStatus"].ToString(),
-                            LeadDate = Convert.ToDateTime(reader["LeadDate"]).ToString("d"),
-                            RemarkBP = reader["RemarkBP"].ToString(),
-                            RemarkSlf = reader["Remark"].ToString(),
-                            RemarkSpl = reader["RemarkSpl"].ToString(),
-                            RemDate = Convert.ToDateTime(reader["RemDate"]).ToString("d")
-                        };
-                        vwLeadActivities.vwLeadDetail = new vwLeadDetail
-                        {
-                            objLead = objLead,
-                            objLeadDetail = objLeadDetail
-                        };
-
-                    }
-                    if (await reader.NextResultAsync())
-                    {
-                        while (await reader.ReadAsync())
-                        {
-                            var leadDetail = new LeadDetail
-                            {
-                                TrDetId = Convert.ToInt32(reader["TrDetId"]),
-                                LeadStatus = Convert.ToString(reader["LeadStatus"]),
-                                //LeadDate = Convert.ToDateTime(reader["LeadDate"]),
-                                //RemDate = Convert.ToDateTime(reader["RemDate"]),
-                                RemarkSlf = reader["RemarkSlf"].ToString(),
-                                UpdBy = reader["UpdBy"].ToString(),
-                                UpdDate = Convert.ToDateTime(reader["UpdDate"]).ToString("g")
-
-                            };
-                            vwLeadActivities.RecentActivities.Add(leadDetail);
-                        }
-                    }
-                }
-
-            }
-            return vwLeadActivities;
-        }
+      
 
         public async Task<vwLead_RecentActivities> GetLeadDetailByIdAsyncNew(int leadId)
         {
@@ -411,14 +285,14 @@ namespace SalesTracker
                                 MeetingMode = reader["MeetingMode"].ToString(),
                                 MeetingDate = Convert.ToDateTime(reader["MeetingDate"]).ToString("dd/MM/yyyy"),
                                 ResponseDesc = reader["ResponseDesc"].ToString(),
-                                NextAppointmentDate = Convert.ToDateTime(reader["NextAppointmentDate"]).ToString("dd/MM/yyyy"),
+                                NextAppointmentDate = reader.IsDBNull(reader.GetOrdinal("NextAppointmentDate")) ? string.Empty: Convert.ToDateTime(reader["NextAppointmentDate"]).ToString("dd/MM/yyyy"),
                                 IsReminderSet = Convert.ToBoolean(reader["IsReminderSet"]),
                                 ReminderDate = reader.IsDBNull(reader.GetOrdinal("ReminderDate")) ? string.Empty : Convert.ToDateTime(reader.GetDateTime(reader.GetOrdinal("ReminderDate"))).ToString("dd/MM/yyyy"),
                                 LeadStatus = reader["LeadStatus"].ToString(),
                                 LeadDate = Convert.ToDateTime(reader["LeadDate"]).ToString("dd/MM/yyyy"),
                                 //RemarkBP = reader["RemarkBP"].ToString(),
                                 RemarkSlf = reader["Remark"].ToString(),
-                                //RemarkSpl = reader["RemarkSpl"].ToString(),
+                                //RemarkSpl = reader["RemarkSpl"].ToStringreader["NextAppointmentDate"]
                             };
                             var leadCompositeDTO = new LeadCompositeDTO
                             {
@@ -491,48 +365,6 @@ namespace SalesTracker
                 return leadCounts;
             }
         }
-
-        public async Task<List<vwLeadDetail>> GetActivelLeads()
-        {
-            var vwLeadDetail = new List<vwLeadDetail>();
-
-            using (var connection = new SqlConnection(_connectionString))
-            {
-                var command = new SqlCommand("sp_GetActiveLeads", connection);
-                await connection.OpenAsync();
-                using (SqlDataReader reader = await command.ExecuteReaderAsync())
-                {
-                    while (await reader.ReadAsync())
-                    {
-                        var lead = new Lead
-                        {
-                            TrId = (int)reader["TrId"],
-                            Catg = reader["Catg"].ToString(),
-                            //CompName = reader["CompName"].ToString(),
-                            KeyPerson = reader["KeyPerson"].ToString(),
-                            ContactNo = reader["ContactNo"].ToString(),
-
-                        };
-                        var leadDetail = new LeadDetail
-                        {
-                            TrDetId = Convert.ToInt32(reader["TrDetId"]),
-                            LeadStatus = Convert.ToString(reader["LeadStatus"]),
-                            LeadDate = Convert.ToDateTime(reader["LeadDate"]).ToShortDateString(),
-                            RemDate = Convert.ToDateTime(reader["RemDate"]).ToShortDateString()
-                        };
-
-                        vwLeadDetail.Add(new vwLeadDetail
-                        {
-                            objLead = lead,
-                            objLeadDetail = leadDetail
-                        });
-
-                    }
-                }
-            }
-            return vwLeadDetail;
-        }
-
         public async Task<List<LeadCompositeDTO>> GetActivelLeadsNew()
         {
             var leadCompositeDTO = new List<LeadCompositeDTO>();
@@ -616,48 +448,6 @@ namespace SalesTracker
             }
             return leadCompositeDTO;
         }
-
-        public async Task<List<vwLeadDetail>> GetActionablelLeads()
-        {
-            var vwLeadDetail = new List<vwLeadDetail>();
-
-            using (var connection = new SqlConnection(_connectionString))
-            {
-                var command = new SqlCommand("sp_GetActionableLeads", connection);
-                await connection.OpenAsync();
-                using (SqlDataReader reader = await command.ExecuteReaderAsync())
-                {
-                    while (await reader.ReadAsync())
-                    {
-                        var lead = new Lead
-                        {
-                            TrId = (int)reader["TrId"],
-                            Catg = reader["Catg"].ToString(),
-                            //CompName = reader["CompName"].ToString(),
-                            KeyPerson = reader["KeyPerson"].ToString(),
-                            ContactNo = reader["ContactNo"].ToString(),
-
-                        };
-                        var leadDetail = new LeadDetail
-                        {
-                            TrDetId = Convert.ToInt32(reader["TrDetId"]),
-                            LeadStatus = Convert.ToString(reader["LeadStatus"]),
-                            LeadDate = Convert.ToDateTime(reader["LeadDate"]).ToShortDateString(),
-                            RemDate = Convert.ToDateTime(reader["RemDate"]).ToShortDateString()
-                        };
-
-                        vwLeadDetail.Add(new vwLeadDetail
-                        {
-                            objLead = lead,
-                            objLeadDetail = leadDetail
-                        });
-
-                    }
-                }
-            }
-            return vwLeadDetail;
-        }
-
         public async Task<List<LeadCompositeDTO>> GetActionablelLeadsNew()
         {
             var leadCompositeDTO = new List<LeadCompositeDTO>();
@@ -709,6 +499,20 @@ namespace SalesTracker
                 return result;
             }
             return null;
+        }
+
+        public SqlParameter[] CreateSqlParameterArray(Dictionary<string, object> parameterTracker)
+        {
+            SqlParameter[] parameters = new SqlParameter[parameterTracker.Count];
+            int index = 0;
+
+            foreach (var kvp in parameterTracker)
+            {
+                parameters[index] = new SqlParameter(kvp.Key, kvp.Value ?? DBNull.Value);
+                index++;
+            }
+
+            return parameters;
         }
 
     }

@@ -96,3 +96,9 @@
     transform: translateY(-50%);
     font-size: 10px;
 }
+.hidden {
+    display: none;
+}
+.show{
+    display:block;
+}

@@ -51,15 +51,7 @@ namespace SalesTracker.Controllers
             return RedirectToAction("LeadTracker");
         }
         [HttpPost] 
-        public IActionResult AddLead([FromBody] vwLeadDetail newvwLead) 
-        { 
-            if (ModelState.IsValid) 
-            { 
-               int trId= _salesTrackerRepository.AddLead(newvwLead.objLead,newvwLead.objLeadDetail); 
-                return Json(trId); 
-            } 
-            return View("LeadTracker"); 
-        }
+      
 
         [HttpPost]
         public IActionResult AddLeadNew([FromBody] LeadCompositeDTO leadCompositeDTO)
@@ -76,12 +68,6 @@ namespace SalesTracker.Controllers
             return NoContent();
         }
         [HttpGet]
-        public async Task<IActionResult> GetTotalLeads()
-        {
-            var leads = await _salesTrackerRepository.GetTotalLeads();
-            return Json(leads);
-        }
-        [HttpGet]
         public async Task<IActionResult> GetTotalLeadsNew()
         {
             var leads = await _salesTrackerRepository.GetTotalLeadsNew();
@@ -93,13 +79,6 @@ namespace SalesTracker.Controllers
             var leads = await _salesTrackerRepository.GetLeadbySelectedKPI(selectedKPI);
             return Json(leads);
         }
-        [HttpGet]
-        public async Task<IActionResult> GetLeadDetailById(int TrId)
-        {
-            var leadDetails = await _salesTrackerRepository.GetLeadDetailByIdAsync(TrId);
-            return Json(leadDetails);
-        }
-
         [HttpGet]
         public async Task<IActionResult> GetLeadDetailByIdNew(int LeadId)
         {
