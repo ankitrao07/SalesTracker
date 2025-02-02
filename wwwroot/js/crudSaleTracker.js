@@ -56,23 +56,20 @@
     getLeadBySelectedKPI('total-leads-details','ActionableLeads');
 
     $("#btnNewLead").click(function () {
-        $("#addLeadModal").addClass('show');
-        $("#addLeadModal").removeClass('hidden');
-        $("#details-container").removeClass("show");
-        $("#details-container").addClass('hidden');
+        $("#addLeadModal").toggleDivs("details-container");
+        //$("#addLeadModal").addClass('show');
+        //$("#addLeadModal").removeClass('hidden');
+        //$("#details-container").removeClass("show");
+        //$("#details-container").addClass('hidden');
     });
     $("#btnCancel").click(function () {
-        $("#addLeadModal").addClass('hidden');
-        $("#addLeadModal").removeClass('show');
-        $("#details-container").removeClass("hidden");
-        $("#details-container").addClass('show');
+        //$("#addLeadModal").toggleDivs();
+        $("#details-container").toggleDivs('addLeadModal');
         $('#recent-activities-list').empty();
     })
     $("#btnModalClose").click(function () {
-        $("#addLeadModal").addClass('hidden');
-        $("#addLeadModal").removeClass('show');
-        $("#details-container").removeClass("hidden");
-        $("#details-container").addClass('show');
+        //$("#addLeadModal").toggleDivs();
+        $("#details-container").toggleDivs('addLeadModal');
         $('#recent-activities-list').empty();
     })
     
@@ -83,10 +80,8 @@ function resetForm() {
 function getLeadBySelectedKPI(id, selectedKPI) {
     var details = document.getElementById(id);
     details.style.display = "block";
-    $("#addLeadModal").addClass('hidden');
-    $("#addLeadModal").removeClass('show');
-    $("#details-container").removeClass("hidden");
-    $("#details-container").addClass('show');
+    //$("#addLeadModal").toggleDivs();
+    $("#details-container").toggleDivs('addLeadModal');
     $('#recent-activities-list').empty();
     if(selectedKPI=='TotalLeads')
     $("#LeadSection").text("Total Leads");
@@ -138,6 +133,20 @@ function getLeadBySelectedKPI(id, selectedKPI) {
                     { "orderable": false, "targets": 7 } // Action (disable sorting)
                 ]
             });
+            // Sort data based on leadDate (or any other field)
+            data.sort(function (a, b) {
+                return new Date(b.leadActivity.leadDate) - new Date(a.leadActivity.leadDate);
+            });
+
+            // Get top 5 recent activities
+            var recentActivities = data.slice(0, 5).map(leads => ({
+                leadId: leads.lead.leadId,
+                leadNumber:leads.lead.leadNumber,
+                updatedDate: leads.leadActivity.leadDate,
+                contactPerson: leads.lead.contactPerson,
+                responseDesc: leads.leadActivity.leadStatus
+            }));
+            $('#recent-activities-list').bindRecentlyAddedLeads(recentActivities)
         },
         error: function (error) {
             console.error("Error fetching data: ", error);
@@ -156,12 +165,11 @@ function getLeadDetailByID(id) {
             //bind Lead Activity info
             setLeadActivityDetails(data.leadComposite.leadActivity);
             //bind recent activities history
-            bindRecentactivities(data.recentActivities);
+            //bindRecentactivities(data.recentActivities);
+            $('#recent-activities-list').bindRecentActivities(data.recentActivities);
             //toggle Divs
-            $("#addLeadModal").addClass('show');
-            $("#addLeadModal").removeClass('hidden');
-            $("#details-container").removeClass("show");
-            $("#details-container").addClass('hidden');
+            $("#addLeadModal").toggleDivs('details-container');
+            //$("#details-container").toggleDivs();
         }
     });
 }
@@ -309,6 +317,71 @@ function setLeadActivityDetails(activity) {
     $("#reminderDateTime").val(activity.reminderDate);
     $("#remark").val(activity.remarkSlf);
 }
+(function ($) {
+    $.fn.bindRecentActivities = function (recentActivitiesList) {
+        return this.each(function () {
+            let activitiesList = $(this);
+            activitiesList.empty(); // Clear existing content 
+            recentActivitiesList.forEach(item => {
+                activitiesList.append(`
+                    <div class="chat-message">
+                        <p class="activity-date"><strong>${item.updatedDate}</strong></p>
+                        <div class="message-content">
+                            <p><strong>${item.updatedBy}:</strong> ${item.responseDesc} <i class="fas fa-envelope-open"></i>.</p>
+                        </div>
+                    </div>
+                `);
+            });
+        });
+    };
+})(jQuery);
 
+//bind recently added leads
+(function ($) {
+    $.fn.bindRecentlyAddedLeads = function (recentlyAddedLeads) {
+        return this.each(function () {
+            let activitiesList = $(this);
+            activitiesList.empty(); // Clear existing content 
+            recentlyAddedLeads.forEach(item => {
+                activitiesList.append(`
+                    <div class="chat-message">
+                        <p class="activity-date"><strong>${item.updatedDate}</strong></p>
+                        <div class="message-content">
+                            <p><strong>${item.contactPerson}:</strong><a href='#' class='lead-link' data-lead-id='${item.leadId}'> ${item.leadNumber}</a>.</p>
+                        </div>
+                    </div>
+                `);
+            });
+        });
+    };
+})(jQuery);
+// Add event delegation to handle clicks on dynamically added lead links
+$(document).on('click', '.lead-link', function (e) {
+    e.preventDefault(); // Prevent the default action
+    var leadId = $(this).data('lead-id');
+    // Call the function to get lead details by ID
+    getLeadDetailByID(leadId);
+});
+// toggle div 
+(function ($) {
+    $.fn.toggleDivs = function () {
+        return this.each(function () {
+            let div = $(this);
 
-
+            if (div.hasClass('show')) {
+                div.removeClass('show').addClass('hidden');
+            } else {
+                div.removeClass('hidden').addClass('show');
+            }
+        });
+    };
+})(jQuery);
+(function ($) {
+    $.fn.toggleDivs = function (hideDivId) {
+        return this.each(function () {
+            let showDiv = $(this);
+            showDiv.removeClass('hidden').addClass('show');
+            $("#" + hideDivId).removeClass('show').addClass('hidden');
+        });
+    };
+})(jQuery);
