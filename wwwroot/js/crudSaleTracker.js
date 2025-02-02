@@ -66,10 +66,14 @@
         $("#addLeadModal").removeClass('show');
         $("#details-container").removeClass("hidden");
         $("#details-container").addClass('show');
+        $('#recent-activities-list').empty();
     })
     $("#btnModalClose").click(function () {
-        $("#addLeadModal").toggle();
-        $("#details-container").toggle();
+        $("#addLeadModal").addClass('hidden');
+        $("#addLeadModal").removeClass('show');
+        $("#details-container").removeClass("hidden");
+        $("#details-container").addClass('show');
+        $('#recent-activities-list').empty();
     })
     
 });
@@ -83,6 +87,7 @@ function getLeadBySelectedKPI(id, selectedKPI) {
     $("#addLeadModal").removeClass('show');
     $("#details-container").removeClass("hidden");
     $("#details-container").addClass('show');
+    $('#recent-activities-list').empty();
     if(selectedKPI=='TotalLeads')
     $("#LeadSection").text("Total Leads");
     else if (selectedKPI == 'ActiveLeads')
@@ -153,8 +158,10 @@ function getLeadDetailByID(id) {
             //bind recent activities history
             bindRecentactivities(data.recentActivities);
             //toggle Divs
-            $("#addLeadModal").toggle();
-            $("#details-container").toggle();
+            $("#addLeadModal").addClass('show');
+            $("#addLeadModal").removeClass('hidden');
+            $("#details-container").removeClass("show");
+            $("#details-container").addClass('hidden');
         }
     });
 }
